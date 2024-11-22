@@ -1,27 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Chord Builder</title>
-  <!-- Include Tailwind CSS via CDN with dark mode enabled -->
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-    }
-  </script>
+  <!-- Include Tailwind CSS via CDN with dark mode enabled based on user's system preference -->
+
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Tonal.js from jsDelivr CDN -->
   <script src="https://cdn.jsdelivr.net/npm/tonal/browser/tonal.min.js"></script>
+  <!-- Soundfont Player -->
+  <script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 font-sans p-6">
   <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-    <div class="flex items-center justify-between mb-6">
-      <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">Chord Builder</h1>
-      <button id="theme-toggle" class="focus:outline-none">
-        <svg id="theme-toggle-light-icon" class="w-6 h-6 text-gray-800 dark:text-gray-100 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 5a1 1 0 100 2 1 1 0 000-2zM4.221 5.221a1 1 0 011.415 0 1 1 0 010 1.415 1 1 0 01-1.415-1.415zM3 10a1 1 0 112 0 1 1 0 11-2 0zM4.221 14.779a1 1 0 111.415 1.415 1 1 0 11-1.415-1.415zM10 15a1 1 0 100 2 1 1 0 000-2zM15.778 14.779a1 1 0 111.415 1.415 1 1 0 11-1.415-1.415zM17 10a1 1 0 112 0 1 1 0 11-2 0zM15.778 5.221a1 1 0 011.415 1.415 1 1 0 11-1.415-1.415zM10 3a1 1 0 100 2 1 1 0 000-2z"/></svg>
-        <svg id="theme-toggle-dark-icon" class="w-6 h-6 text-gray-800 dark:text-gray-100 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 116.707 2.707a7 7 0 1010.586 10.586z"/></svg>
-      </button>
-    </div>
+    <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">Chord Builder</h1>
 
     <!-- Song selection and save controls -->
     <div class="flex flex-col md:flex-row items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
@@ -102,32 +94,12 @@
 
       let chords = [];
       let currentSongName = '';
+      let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      let piano;
 
-      // Dark mode toggle
-      const themeToggleBtn = document.getElementById('theme-toggle');
-      const htmlElement = document.documentElement;
-
-      // Check for saved user preference
-      if (localStorage.getItem('theme') === 'dark') {
-        htmlElement.classList.add('dark');
-      } else {
-        htmlElement.classList.remove('dark');
-      }
-
-      // Update icons based on current theme
-      function updateThemeIcons() {
-        const isDarkMode = htmlElement.classList.contains('dark');
-        document.getElementById('theme-toggle-light-icon').style.display = isDarkMode ? 'none' : 'block';
-        document.getElementById('theme-toggle-dark-icon').style.display = isDarkMode ? 'block' : 'none';
-      }
-
-      updateThemeIcons();
-
-      themeToggleBtn.addEventListener('click', function() {
-        htmlElement.classList.toggle('dark');
-        const isDarkMode = htmlElement.classList.contains('dark');
-        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-        updateThemeIcons();
+      // Load the piano instrument using Soundfont Player
+      Soundfont.instrument(audioContext, 'acoustic_grand_piano').then(function (pianoInstrument) {
+        piano = pianoInstrument;
       });
 
       // Populate root notes and chord types from the library
@@ -181,7 +153,7 @@
       function populateSongList() {
         const songSelect = document.getElementById('song-select');
         songSelect.innerHTML = '<option value="">-- Select a song --</option>';
-        const songNames = Object.keys(localStorage).filter(key => key !== 'theme');
+        const songNames = Object.keys(localStorage);
 
         songNames.forEach(name => {
           const option = document.createElement('option');
@@ -261,6 +233,14 @@
           const buttonGroup = document.createElement('div');
           buttonGroup.classList.add('flex', 'space-x-2');
 
+          // Create Play button
+          const playButton = document.createElement('button');
+          playButton.textContent = 'Play';
+          playButton.classList.add('bg-green-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-green-600');
+          playButton.addEventListener('click', () => {
+            playChord(chord);
+          });
+
           // Create buttons for move up/down, edit, remove
           const upButton = document.createElement('button');
           upButton.textContent = 'Up';
@@ -290,6 +270,7 @@
             removeChord(index);
           });
 
+          buttonGroup.appendChild(playButton);
           buttonGroup.appendChild(upButton);
           buttonGroup.appendChild(downButton);
           buttonGroup.appendChild(editButton);
@@ -304,6 +285,21 @@
         // Display the MIDI notes array as formatted JSON
         const midiNotesArray = chords.map(chord => chord.midiNotes);
         document.getElementById('midi-notes-json').textContent = JSON.stringify(midiNotesArray, null, 2);
+      }
+
+      function playChord(chord) {
+        if (!piano) {
+          alert('Instrument is loading, please wait a moment.');
+          return;
+        }
+
+        // Stop any currently playing notes
+        piano.stop();
+
+        // Play the chord notes
+        chord.notes.forEach(note => {
+          piano.play(note, 0, { duration: 1, gain: 1 });
+        });
       }
 
       function moveChordUp(index) {
