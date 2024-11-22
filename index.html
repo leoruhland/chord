@@ -1,382 +1,423 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Chord Builder</title>
-  <!-- Include Tailwind CSS via CDN with dark mode enabled based on user's system preference -->
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chord Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tonal/browser/tonal.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
+  </head>
+  <body class="bg-gray-100 dark:bg-gray-900 font-sans p-6">
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">Chord Builder</h1>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Tonal.js from jsDelivr CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/tonal/browser/tonal.min.js"></script>
-  <!-- Soundfont Player -->
-  <script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
-</head>
-<body class="bg-gray-100 dark:bg-gray-900 font-sans p-6">
-  <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-    <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">Chord Builder</h1>
-
-    <!-- Song selection and save controls -->
-    <div class="flex flex-col md:flex-row items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
-      <label for="song-select" class="text-lg font-medium text-gray-800 dark:text-gray-100">Song:</label>
-      <select id="song-select" class="flex-grow border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-        <!-- Song options will be populated here -->
-      </select>
-      <button type="button" id="save-song" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-        Save Song
-      </button>
-    </div>
-
-    <!-- Chord parameter selection form -->
-    <form id="chord-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label for="root-note" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Root Note:</label>
-        <select id="root-note" name="root-note" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-          <!-- Root notes will be populated here -->
+      <!-- Song selection and controls -->
+      <div class="flex flex-col md:flex-row items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
+        <label for="song-select" class="text-lg font-medium text-gray-800 dark:text-gray-100">Song:</label>
+        <select id="song-select" class="flex-grow border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+          <!-- Song options will be populated here -->
         </select>
-      </div>
-
-      <div>
-        <label for="chord-type" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Chord Type:</label>
-        <select id="chord-type" name="chord-type" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-          <!-- Chord types will be populated here -->
-        </select>
-      </div>
-
-      <div>
-        <label for="inversion" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Inversion:</label>
-        <select id="inversion" name="inversion" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-          <option value="0">Root Position</option>
-          <option value="1">1st Inversion</option>
-          <option value="2">2nd Inversion</option>
-          <option value="3">3rd Inversion</option>
-          <option value="4">4th Inversion</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="octave" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Octave:</label>
-        <select id="octave" name="octave" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-          <option value="0">0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3" selected>3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-        </select>
-      </div>
-
-      <div class="md:col-span-2">
-        <button type="button" id="add-chord" class="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-          Add Chord
+        <button type="button" id="save-song" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+          Save Song
+        </button>
+        <button type="button" id="remove-song" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+          Remove Song
         </button>
       </div>
-    </form>
 
-    <!-- Chord list -->
-    <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">Chord List</h2>
-    <ul id="chord-list" class="space-y-4">
-      <!-- List of chords will be displayed here -->
-    </ul>
+      <!-- Chord parameter selection form -->
+      <form id="chord-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Form fields will be added here -->
+        <div>
+          <label for="root-note" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Root Note:</label>
+          <select id="root-note" name="root-note" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+            <!-- Root notes will be populated here -->
+          </select>
+        </div>
 
-    <!-- MIDI Notes Array -->
-    <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">MIDI Notes Array</h2>
-    <pre id="midi-notes-json" class="bg-gray-200 dark:bg-gray-800 p-4 rounded-md overflow-auto text-gray-800 dark:text-gray-100"></pre>
-  </div>
+        <div>
+          <label for="chord-type" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Chord Type:</label>
+          <select id="chord-type" name="chord-type" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+            <!-- Chord types will be populated here -->
+          </select>
+        </div>
 
-  <script>
-    // Wait for the DOM to fully load
-    document.addEventListener('DOMContentLoaded', function() {
-      // Ensure Tonal is available globally
-      const { Note, Chord, ChordType, Interval } = Tonal;
+        <div>
+          <label for="inversion" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Inversion:</label>
+          <select id="inversion" name="inversion" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+            <option value="0">Root Position</option>
+            <option value="1">1st Inversion</option>
+            <option value="2">2nd Inversion</option>
+            <option value="3">3rd Inversion</option>
+            <option value="4">4th Inversion</option>
+          </select>
+        </div>
 
-      let chords = [];
-      let currentSongName = '';
-      let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      let piano;
+        <div>
+          <label for="octave" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Octave:</label>
+          <select id="octave" name="octave" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+          </select>
+        </div>
 
-      // Load the piano instrument using Soundfont Player
-      Soundfont.instrument(audioContext, 'acoustic_grand_piano').then(function (pianoInstrument) {
-        piano = pianoInstrument;
-      });
+        <div class="md:col-span-2">
+          <button type="button" id="add-chord" class="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+            Add Chord
+          </button>
+        </div>
+      </form>
 
-      // Populate root notes and chord types from the library
-      function populateSelectors() {
-        // Generate all 12 semitones starting from C
-        const semitones = Array.from({ length: 12 }, (_, i) => i);
-        const notesSet = new Set();
+      <!-- Chord list -->
+      <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">Chord List</h2>
+      <ul id="chord-list" class="space-y-4">
+        <!-- List of chords will be displayed here -->
+      </ul>
 
-        semitones.forEach(semitone => {
-          const interval = Interval.fromSemitones(semitone);
-          const noteName = Note.transpose('C', interval);
-          const enharmonic = Note.enharmonic(noteName);
-          notesSet.add(noteName);
-          notesSet.add(enharmonic);
+      <!-- MIDI Notes Array -->
+      <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">MIDI Notes Array</h2>
+      <pre id="midi-notes-json" class="bg-gray-200 dark:bg-gray-800 p-4 rounded-md overflow-auto text-gray-800 dark:text-gray-100"></pre>
+    </div>
+
+    <script>
+      // Wait for the DOM to fully load
+      document.addEventListener('DOMContentLoaded', function() {
+        // Ensure Tonal is available globally
+        const { Note, Chord, ChordType, Interval } = Tonal;
+
+        let chords = [];
+        let currentSongName = '';
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let piano;
+
+        // Load the piano instrument using Soundfont Player
+        Soundfont.instrument(audioContext, 'acoustic_grand_piano').then(function (pianoInstrument) {
+          piano = pianoInstrument;
         });
 
-        // Convert set to array and sort
-        const uniqueNotes = Array.from(notesSet).sort(Note.compare);
+        // Populate root notes and chord types from the library
+        function populateSelectors() {
+          // Generate all 12 semitones starting from C
+          const semitones = Array.from({ length: 12 }, (_, i) => i);
+          const notesSet = new Set();
 
-        const rootNoteSelect = document.getElementById('root-note');
-        uniqueNotes.forEach(note => {
-          const option = document.createElement('option');
-          option.value = note;
-          option.textContent = note;
-          rootNoteSelect.appendChild(option);
-        });
+          semitones.forEach(semitone => {
+            const interval = Interval.fromSemitones(semitone);
+            const noteName = Note.transpose('C', interval);
+            const enharmonic = Note.enharmonic(noteName);
+            notesSet.add(noteName);
+            notesSet.add(enharmonic);
+          });
 
-        // Get all chord types
-        const chordTypes = ChordType.all();
+          // Convert set to array and sort
+          const uniqueNotes = Array.from(notesSet).sort(Note.compare);
 
-        // Filter out chord types with empty or strange names
-        const filteredChordTypes = chordTypes.filter(chordType => {
-          return chordType.name && (chordType.aliases.length > 0 || chordType.symbol);
-        });
+          const rootNoteSelect = document.getElementById('root-note');
+          uniqueNotes.forEach(note => {
+            const option = document.createElement('option');
+            option.value = note;
+            option.textContent = note;
+            rootNoteSelect.appendChild(option);
+          });
 
-        // Sort chord types alphabetically by name
-        filteredChordTypes.sort((a, b) => a.name.localeCompare(b.name));
+          // Get all chord types
+          const chordTypes = ChordType.all();
 
-        const chordTypeSelect = document.getElementById('chord-type');
-        filteredChordTypes.forEach(chordType => {
-          const option = document.createElement('option');
-          option.value = chordType.aliases[0] || chordType.symbol || chordType.name;
-          option.textContent = chordType.name;
-          chordTypeSelect.appendChild(option);
-        });
+          // Filter out chord types with empty or strange names
+          const filteredChordTypes = chordTypes.filter(chordType => {
+            return chordType.name && (chordType.aliases.length > 0 || chordType.symbol);
+          });
 
-        // Populate song list
-        populateSongList();
-      }
+          // Sort chord types alphabetically by name
+          filteredChordTypes.sort((a, b) => a.name.localeCompare(b.name));
 
-      function populateSongList() {
-        const songSelect = document.getElementById('song-select');
-        songSelect.innerHTML = '<option value="">-- Select a song --</option>';
-        const songNames = Object.keys(localStorage);
+          const chordTypeSelect = document.getElementById('chord-type');
+          filteredChordTypes.forEach(chordType => {
+            const option = document.createElement('option');
+            option.value = chordType.aliases[0] || chordType.symbol || chordType.name;
+            option.textContent = chordType.name;
+            chordTypeSelect.appendChild(option);
+          });
 
-        songNames.forEach(name => {
-          const option = document.createElement('option');
-          option.value = name;
-          option.textContent = name;
-          songSelect.appendChild(option);
-        });
-      }
-
-      // Call populateSelectors after DOM is ready
-      populateSelectors();
-
-      document.getElementById('add-chord').addEventListener('click', function() {
-        const rootNote = document.getElementById('root-note').value;
-        const chordTypeValue = document.getElementById('chord-type').value;
-        const inversion = parseInt(document.getElementById('inversion').value);
-        const octave = parseInt(document.getElementById('octave').value);
-
-        // Build the chord symbol
-        const chordSymbol = rootNote + chordTypeValue;
-
-        // Use Tonal.js to get the chord notes
-        const chordData = Chord.get(chordSymbol);
-
-        if (chordData.notes.length === 0) {
-          alert('Invalid chord');
-          return;
+          // Populate song list
+          populateSongList();
         }
 
-        // Adjust the notes to the selected octave
-        let octaveAdjustedNotes = chordData.intervals.map(interval => {
-          let note = Note.transpose(rootNote + octave, interval);
-          return note;
-        });
+        function populateSongList() {
+          const songSelect = document.getElementById('song-select');
+          songSelect.innerHTML = '<option value="">-- Select a song --</option>';
+          const songNames = [];
 
-        // Apply inversion
-        for (let i = 0; i < inversion; i++) {
-          let note = octaveAdjustedNotes.shift();
-          let noteUp = Note.transpose(note, '8P');
-          octaveAdjustedNotes.push(noteUp);
+          // Only include keys that start with 'song:'
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('song:')) {
+              songNames.push(key.substring(5)); // Remove 'song:' prefix
+            }
+          }
+
+          songNames.forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            songSelect.appendChild(option);
+          });
+
+          // Set the song select to the current song if available
+          if (currentSongName !== '') {
+            songSelect.value = currentSongName;
+          }
         }
 
-        // Convert notes to MIDI numbers
-        const midiNotes = octaveAdjustedNotes.map(note => Note.midi(note));
+        // Call populateSelectors after DOM is ready
+        populateSelectors();
 
-        // Add the chord to the array
-        chords.push({
-          rootNote: rootNote,
-          chordType: chordTypeValue,
-          inversion: inversion,
-          octave: octave,
-          notes: octaveAdjustedNotes,
-          midiNotes: midiNotes
+        // Event listener for adding a chord
+        document.getElementById('add-chord').addEventListener('click', function() {
+          const rootNote = document.getElementById('root-note').value;
+          const chordTypeValue = document.getElementById('chord-type').value;
+          const inversion = parseInt(document.getElementById('inversion').value);
+          const octave = parseInt(document.getElementById('octave').value);
+
+          // Build the chord symbol
+          const chordSymbol = rootNote + chordTypeValue;
+
+          // Use Tonal.js to get the chord notes
+          const chordData = Chord.get(chordSymbol);
+
+          if (chordData.notes.length === 0) {
+            alert('Invalid chord');
+            return;
+          }
+
+          // Adjust the notes to the selected octave
+          let octaveAdjustedNotes = chordData.intervals.map(interval => {
+            let note = Note.transpose(rootNote + octave, interval);
+            return note;
+          });
+
+          // Apply inversion
+          for (let i = 0; i < inversion; i++) {
+            let note = octaveAdjustedNotes.shift();
+            let noteUp = Note.transpose(note, '8P');
+            octaveAdjustedNotes.push(noteUp);
+          }
+
+          // Convert notes to MIDI numbers
+          const midiNotes = octaveAdjustedNotes.map(note => Note.midi(note));
+
+          // Add the chord to the array
+          chords.push({
+            rootNote: rootNote,
+            chordType: chordTypeValue,
+            inversion: inversion,
+            octave: octave,
+            notes: octaveAdjustedNotes,
+            midiNotes: midiNotes
+          });
+
+          // Update the chord list display
+          updateChordList();
         });
 
-        // Update the chord list display
-        updateChordList();
-      });
+        function updateChordList() {
+          const chordList = document.getElementById('chord-list');
+          chordList.innerHTML = '';
 
-      function updateChordList() {
-        const chordList = document.getElementById('chord-list');
-        chordList.innerHTML = '';
+          chords.forEach((chord, index) => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('chord-item', 'flex', 'items-center', 'justify-between', 'bg-gray-100', 'dark:bg-gray-700', 'p-4', 'rounded-md');
 
-        chords.forEach((chord, index) => {
-          const listItem = document.createElement('li');
-          listItem.classList.add('chord-item', 'flex', 'items-center', 'justify-between', 'bg-gray-100', 'dark:bg-gray-700', 'p-4', 'rounded-md');
+            const inversionText = chord.inversion === 0 ? 'Root Position' : `${chord.inversion} Inversion`;
+            const chordInfo = `${chord.rootNote}${chord.chordType || ''} (${inversionText}, Octave: ${chord.octave})`;
 
-          const inversionText = chord.inversion === 0 ? 'Root Position' : `${chord.inversion} Inversion`;
-          const chordInfo = `${chord.rootNote}${chord.chordType || ''} (${inversionText}, Octave: ${chord.octave})`;
+            const chordDetails = document.createElement('div');
+            chordDetails.innerHTML = `
+              <div class="text-lg font-semibold text-gray-800 dark:text-gray-100">${chordInfo}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-300">Notes: ${chord.notes.join(', ')} | MIDI: ${chord.midiNotes.join(', ')}</div>
+            `;
 
-          const chordDetails = document.createElement('div');
-          chordDetails.innerHTML = `
-            <div class="text-lg font-semibold text-gray-800 dark:text-gray-100">${chordInfo}</div>
-            <div class="text-sm text-gray-600 dark:text-gray-300">Notes: ${chord.notes.join(', ')} | MIDI: ${chord.midiNotes.join(', ')}</div>
-          `;
+            const buttonGroup = document.createElement('div');
+            buttonGroup.classList.add('flex', 'space-x-2');
 
-          const buttonGroup = document.createElement('div');
-          buttonGroup.classList.add('flex', 'space-x-2');
+            // Create Play button
+            const playButton = document.createElement('button');
+            playButton.textContent = 'Play';
+            playButton.classList.add('bg-green-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-green-600');
+            playButton.addEventListener('click', () => {
+              playChord(chord);
+            });
 
-          // Create Play button
-          const playButton = document.createElement('button');
-          playButton.textContent = 'Play';
-          playButton.classList.add('bg-green-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-green-600');
-          playButton.addEventListener('click', () => {
-            playChord(chord);
+            // Create buttons for move up/down, edit, remove
+            const upButton = document.createElement('button');
+            upButton.textContent = 'Up';
+            upButton.classList.add('bg-blue-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-blue-600');
+            upButton.addEventListener('click', () => {
+              moveChordUp(index);
+            });
+
+            const downButton = document.createElement('button');
+            downButton.textContent = 'Down';
+            downButton.classList.add('bg-blue-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-blue-600');
+            downButton.addEventListener('click', () => {
+              moveChordDown(index);
+            });
+
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Edit';
+            editButton.classList.add('bg-yellow-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-yellow-600');
+            editButton.addEventListener('click', () => {
+              editChord(index);
+            });
+
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.classList.add('bg-red-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-red-600');
+            removeButton.addEventListener('click', () => {
+              removeChord(index);
+            });
+
+            buttonGroup.appendChild(playButton);
+            buttonGroup.appendChild(upButton);
+            buttonGroup.appendChild(downButton);
+            buttonGroup.appendChild(editButton);
+            buttonGroup.appendChild(removeButton);
+
+            listItem.appendChild(chordDetails);
+            listItem.appendChild(buttonGroup);
+
+            chordList.appendChild(listItem);
           });
 
-          // Create buttons for move up/down, edit, remove
-          const upButton = document.createElement('button');
-          upButton.textContent = 'Up';
-          upButton.classList.add('bg-blue-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-blue-600');
-          upButton.addEventListener('click', () => {
-            moveChordUp(index);
-          });
-
-          const downButton = document.createElement('button');
-          downButton.textContent = 'Down';
-          downButton.classList.add('bg-blue-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-blue-600');
-          downButton.addEventListener('click', () => {
-            moveChordDown(index);
-          });
-
-          const editButton = document.createElement('button');
-          editButton.textContent = 'Edit';
-          editButton.classList.add('bg-yellow-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-yellow-600');
-          editButton.addEventListener('click', () => {
-            editChord(index);
-          });
-
-          const removeButton = document.createElement('button');
-          removeButton.textContent = 'Remove';
-          removeButton.classList.add('bg-red-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-red-600');
-          removeButton.addEventListener('click', () => {
-            removeChord(index);
-          });
-
-          buttonGroup.appendChild(playButton);
-          buttonGroup.appendChild(upButton);
-          buttonGroup.appendChild(downButton);
-          buttonGroup.appendChild(editButton);
-          buttonGroup.appendChild(removeButton);
-
-          listItem.appendChild(chordDetails);
-          listItem.appendChild(buttonGroup);
-
-          chordList.appendChild(listItem);
-        });
-
-        // Display the MIDI notes array as formatted JSON
-        const midiNotesArray = chords.map(chord => chord.midiNotes);
-        document.getElementById('midi-notes-json').textContent = JSON.stringify(midiNotesArray, null, 2);
-      }
-
-      function playChord(chord) {
-        if (!piano) {
-          alert('Instrument is loading, please wait a moment.');
-          return;
+          // Display the MIDI notes array as formatted JSON
+          const midiNotesArray = chords.map(chord => chord.midiNotes);
+          document.getElementById('midi-notes-json').textContent = JSON.stringify(midiNotesArray, null, 2);
         }
 
-        // Stop any currently playing notes
-        piano.stop();
+        function playChord(chord) {
+          if (!piano) {
+            alert('Instrument is loading, please wait a moment.');
+            return;
+          }
 
-        // Play the chord notes
-        chord.notes.forEach(note => {
-          piano.play(note, 0, { duration: 1, gain: 1 });
-        });
-      }
+          // Stop any currently playing notes
+          piano.stop();
 
-      function moveChordUp(index) {
-        if (index > 0) {
-          [chords[index - 1], chords[index]] = [chords[index], chords[index - 1]];
+          // Play the chord notes
+          chord.notes.forEach(note => {
+            piano.play(note, 0, { duration: 1 });
+          });
+        }
+
+        function moveChordUp(index) {
+          if (index > 0) {
+            [chords[index - 1], chords[index]] = [chords[index], chords[index - 1]];
+            updateChordList();
+          }
+        }
+
+        function moveChordDown(index) {
+          if (index < chords.length - 1) {
+            [chords[index], chords[index + 1]] = [chords[index + 1], chords[index]];
+            updateChordList();
+          }
+        }
+
+        function removeChord(index) {
+          chords.splice(index, 1);
           updateChordList();
         }
-      }
 
-      function moveChordDown(index) {
-        if (index < chords.length - 1) {
-          [chords[index], chords[index + 1]] = [chords[index + 1], chords[index]];
+        function editChord(index) {
+          // Load the chord parameters into the form
+          const chord = chords[index];
+          document.getElementById('root-note').value = chord.rootNote;
+          document.getElementById('chord-type').value = chord.chordType;
+          document.getElementById('inversion').value = chord.inversion;
+          document.getElementById('octave').value = chord.octave;
+
+          // Remove the chord from the list
+          chords.splice(index, 1);
           updateChordList();
         }
-      }
 
-      function removeChord(index) {
-        chords.splice(index, 1);
-        updateChordList();
-      }
-
-      function editChord(index) {
-        // Load the chord parameters into the form
-        const chord = chords[index];
-        document.getElementById('root-note').value = chord.rootNote;
-        document.getElementById('chord-type').value = chord.chordType;
-        document.getElementById('inversion').value = chord.inversion;
-        document.getElementById('octave').value = chord.octave;
-
-        // Remove the chord from the list
-        chords.splice(index, 1);
-        updateChordList();
-      }
-
-      // Save song to localStorage
-      document.getElementById('save-song').addEventListener('click', function() {
-        let songName = prompt('Enter song name:', currentSongName);
-        if (songName !== null) {
-          songName = songName.trim();
-          if (songName === '') {
-            if (currentSongName !== '') {
-              // Update current song
-              localStorage.setItem(currentSongName, JSON.stringify(chords));
-              alert('Song updated.');
+        // Save song to localStorage
+        document.getElementById('save-song').addEventListener('click', function() {
+          let songName = prompt('Enter song name:', currentSongName);
+          if (songName !== null) {
+            songName = songName.trim();
+            if (songName === '') {
+              if (currentSongName !== '') {
+                // Update current song
+                localStorage.setItem('song:' + currentSongName, JSON.stringify(chords));
+                alert('Song updated.');
+              } else {
+                alert('Please enter a valid song name.');
+              }
             } else {
-              alert('Please enter a valid song name.');
+              // Save new song or update existing
+              localStorage.setItem('song:' + songName, JSON.stringify(chords));
+              currentSongName = songName;
+              populateSongList();
+              document.getElementById('song-select').value = songName;
+              alert('Song saved.');
+            }
+          }
+        });
+
+        // Remove song from localStorage
+        document.getElementById('remove-song').addEventListener('click', function() {
+          const songSelect = document.getElementById('song-select');
+          const songName = songSelect.value;
+          if (songName !== '') {
+            const confirmDelete = confirm(`Are you sure you want to delete the song "${songName}"?`);
+            if (confirmDelete) {
+              localStorage.removeItem('song:' + songName);
+              if (songName === currentSongName) {
+                currentSongName = '';
+                chords = [];
+                updateChordList();
+              }
+              populateSongList();
+              alert(`Song "${songName}" has been removed.`);
             }
           } else {
-            // Save new song or update existing
-            localStorage.setItem(songName, JSON.stringify(chords));
-            currentSongName = songName;
-            populateSongList();
-            document.getElementById('song-select').value = songName;
-            alert('Song saved.');
+            alert('Please select a song to remove.');
           }
-        }
-      });
+        });
 
-      // Load selected song
-      document.getElementById('song-select').addEventListener('change', function() {
-        const songName = this.value;
-        if (songName !== '') {
-          const songData = localStorage.getItem(songName);
-          if (songData) {
-            chords = JSON.parse(songData);
-            currentSongName = songName;
+        // Load selected song
+        document.getElementById('song-select').addEventListener('change', function() {
+          const songName = this.value;
+          if (songName !== '') {
+            const songData = localStorage.getItem('song:' + songName);
+            if (songData) {
+              try {
+                chords = JSON.parse(songData);
+                currentSongName = songName;
+                updateChordList();
+                alert(`Loaded song: ${songName}`);
+              } catch (e) {
+                alert('Error loading song data. The data may be corrupted.');
+              }
+            } else {
+              alert('Song data not found.');
+            }
+          } else {
+            // Clear current song
+            chords = [];
+            currentSongName = '';
             updateChordList();
-            alert(`Loaded song: ${songName}`);
           }
-        } else {
-          // Clear current song
-          chords = [];
-          currentSongName = '';
-          updateChordList();
-        }
+        });
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
