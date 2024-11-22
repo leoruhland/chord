@@ -2,110 +2,251 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Chord Builder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- DaisyUI CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
     <!-- Tonal.js -->
     <script src="https://cdn.jsdelivr.net/npm/tonal/browser/tonal.min.js"></script>
     <!-- Soundfont Player -->
     <script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
+    <title>Chord Builder</title>
   </head>
-  <body class="bg-gray-100 dark:bg-gray-900 font-sans p-6">
-    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">Chord Builder</h1>
+  <body class="bg-gray-100">
+    <div class="drawer lg:drawer-open">
+      <!-- Drawer toggle -->
+      <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+      <!-- Main Content -->
+      <div class="drawer-content flex flex-col">
+        <!-- Navbar -->
+        <div class="navbar bg-base-300 w-full">
+          <div class="flex-none lg:hidden">
+            <label for="my-drawer-2" aria-label="open sidebar" class="btn btn-square btn-ghost">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="inline-block h-6 w-6 stroke-current">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </label>
+          </div>
+          <div class="flex-1 px-2 mx-2 text-xl font-bold">
+            <span id="navbar-title">(Unsaved song)</span>
+          </div>
+        </div>
 
-      <!-- Song selection and controls -->
-      <div class="flex flex-col md:flex-row items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
-        <label for="song-select" class="text-lg font-medium text-gray-800 dark:text-gray-100">Song:</label>
-        <select id="song-select" class="flex-grow border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-          <!-- Song options will be populated here -->
-        </select>
-        <button type="button" id="save-song" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-          Save Song
-        </button>
-        <button type="button" id="remove-song" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
-          Remove Song
-        </button>
+        <!-- Page content -->
+        <div class="p-4 overflow-y-auto">
+          <!-- Chord parameter selection form -->
+          <form id="chord-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Form fields -->
+            <div>
+              <label for="root-note" class="label">
+                <span class="label-text">Root Note</span>
+              </label>
+              <select id="root-note" name="root-note" class="select select-bordered w-full">
+                <!-- Root notes will be populated here -->
+              </select>
+            </div>
+
+            <div>
+              <label for="chord-type" class="label">
+                <span class="label-text">Chord Type</span>
+              </label>
+              <select id="chord-type" name="chord-type" class="select select-bordered w-full">
+                <!-- Chord types will be populated here -->
+              </select>
+            </div>
+
+            <div>
+              <label for="inversion" class="label">
+                <span class="label-text">Inversion</span>
+              </label>
+              <select id="inversion" name="inversion" class="select select-bordered w-full">
+                <option value="0">Root Position</option>
+                <option value="1">1st Inversion</option>
+                <option value="2">2nd Inversion</option>
+                <option value="3">3rd Inversion</option>
+                <option value="4">4th Inversion</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="octave" class="label">
+                <span class="label-text">Octave</span>
+              </label>
+              <select id="octave" name="octave" class="select select-bordered w-full">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+              </select>
+            </div>
+
+            <div class="col-span-full flex space-x-2">
+              <button type="button" id="add-chord" class="btn btn-success flex-1">
+                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor"
+                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M12 4v16m8-8H4"></path></svg>
+                Add Chord
+              </button>
+              <button type="button" id="preview-chord" class="btn btn-info flex-1">
+                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor"
+                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M14.752 11.168l-5.197-3.026A1 1 0 008 8.88v6.242a1
+                     1 0 001.555.832l5.197-3.026a1 1 0 000-1.664z"></path></svg>
+                Preview Chord
+              </button>
+            </div>
+          </form>
+
+          <!-- Chord list and MIDI notes side by side -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Chord list -->
+            <div>
+              <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold mb-4">Chord List</h2>
+                <button id="clear-chord-list" class="btn btn-warning btn-sm">
+                  <svg class="h-5 w-5 mr-1" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                       d="M9 13h6m2 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  Clear Chord List
+                </button>
+              </div>
+              <ul id="chord-list" class="space-y-4">
+                <!-- List of chords will be displayed here -->
+              </ul>
+            </div>
+
+            <!-- MIDI Notes Array -->
+            <div>
+              <h2 class="text-2xl font-bold mb-4">MIDI Notes Array</h2>
+              <pre id="midi-notes-json" class="bg-base-200 p-4 rounded-md overflow-auto"></pre>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Import/Export Controls -->
-      <div class="flex flex-col md:flex-row items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
-        <button type="button" id="export-song" class="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 w-full md:w-auto">
-          Export Song
-        </button>
-        <button type="button" id="export-all-songs" class="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 w-full md:w-auto">
-          Export All Songs
-        </button>
-        <input type="file" id="import-songs" accept=".json" class="hidden" />
-        <label for="import-songs" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 text-center cursor-pointer w-full md:w-auto">
-          Import Songs
-        </label>
+      <!-- Drawer Sidebar -->
+      <div class="drawer-side">
+        <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
+        <div class="bg-base-200 text-base-content min-h-full">
+          <div class="p-0">
+            <ul class="menu bg-base-200 rounded-box w-56">
+              <li>
+                <a href="#" id="action-new-song">
+                  <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4v16m8-8H4"></path>
+                  </svg>
+                  New Song
+                </a>
+              </li>
+              <li>
+                <a href="#" id="action-save-song">
+                  <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  Save Song
+                </a>
+              </li>
+              <li>
+                <a href="#" id="action-remove-song">
+                  <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                  Remove Song
+                </a>
+              </li>
+              <li>
+                <a href="#" id="action-export-song">
+                  <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M7 12l5 5 5-5M12 17V3"></path>
+                  </svg>
+                  Export Song
+                </a>
+              </li>
+              <li>
+                <a href="#" id="action-export-all-songs">
+                  <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v8m0 0l-3-3m3 3l3-3m-3 3V4"></path>
+                  </svg>
+                  Export All Songs
+                </a>
+              </li>
+              <li>
+                <a href="#" id="action-import-songs">
+                  <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor"
+                       viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 16V8m0 8l3-3m-3 3l-3-3m9 5H6a2 2 0 01-2-2V7"></path>
+                  </svg>
+                  Import Songs
+                </a>
+              </li>
+            </ul>
+
+            <ul class="menu bg-base-200 rounded-box w-56 mt-4">
+              <li class="menu-title"><span>Songs</span></li>
+              <div id="song-list">
+                <!-- Songs will be populated here -->
+              </div>
+            </ul>
+          </div>
+        </div>
       </div>
-
-      <!-- Chord parameter selection form -->
-      <form id="chord-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Form fields will be added here -->
-        <div>
-          <label for="root-note" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Root Note:</label>
-          <select id="root-note" name="root-note" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-            <!-- Root notes will be populated here -->
-          </select>
-        </div>
-
-        <div>
-          <label for="chord-type" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Chord Type:</label>
-          <select id="chord-type" name="chord-type" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-            <!-- Chord types will be populated here -->
-          </select>
-        </div>
-
-        <div>
-          <label for="inversion" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Inversion:</label>
-          <select id="inversion" name="inversion" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-            <option value="0">Root Position</option>
-            <option value="1">1st Inversion</option>
-            <option value="2">2nd Inversion</option>
-            <option value="3">3rd Inversion</option>
-            <option value="4">4th Inversion</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="octave" class="block text-lg font-medium mb-1 text-gray-800 dark:text-gray-100">Octave:</label>
-          <select id="octave" name="octave" class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3" selected>3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-          </select>
-        </div>
-
-        <div class="md:col-span-2">
-          <button type="button" id="add-chord" class="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
-            Add Chord
-          </button>
-        </div>
-      </form>
-
-      <!-- Chord list -->
-      <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">Chord List</h2>
-      <ul id="chord-list" class="space-y-4">
-        <!-- List of chords will be displayed here -->
-      </ul>
-
-      <!-- MIDI Notes Array -->
-      <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">MIDI Notes Array</h2>
-      <pre id="midi-notes-json" class="bg-gray-200 dark:bg-gray-800 p-4 rounded-md overflow-auto text-gray-800 dark:text-gray-100"></pre>
     </div>
 
+    <!-- Hidden file input for import songs -->
+    <input type="file" id="import-songs" accept=".json" class="hidden" />
+
     <script>
-      // Wait for the DOM to fully load
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         // Ensure Tonal is available globally
         const { Note, Chord, ChordType, Interval } = Tonal;
 
@@ -122,13 +263,234 @@
         // Prefix for song keys in localStorage
         const SONG_PREFIX = 'song:';
 
-        // Populate root notes and chord types from the library
+        // Update navbar title
+        function updateNavbarTitle() {
+          const navbarTitle = document.getElementById('navbar-title');
+          navbarTitle.textContent = currentSongName !== '' ? currentSongName : '(Unsaved song)';
+        }
+
+        // Initialize selectors
+        populateSelectors();
+
+        // Attach event listeners
+        attachEventListeners();
+
+        function attachEventListeners() {
+          // Action buttons
+          document.getElementById('action-new-song').addEventListener('click', function (e) {
+            e.preventDefault();
+            createNewSong();
+            // Close drawer on mobile
+            document.getElementById('my-drawer-2').checked = false;
+          });
+
+          document.getElementById('action-save-song').addEventListener('click', function (e) {
+            e.preventDefault();
+            saveSong();
+            document.getElementById('my-drawer-2').checked = false;
+          });
+
+          document.getElementById('action-remove-song').addEventListener('click', function (e) {
+            e.preventDefault();
+            removeSong();
+            document.getElementById('my-drawer-2').checked = false;
+          });
+
+          document.getElementById('action-export-song').addEventListener('click', function (e) {
+            e.preventDefault();
+            exportSong();
+            document.getElementById('my-drawer-2').checked = false;
+          });
+
+          document.getElementById('action-export-all-songs').addEventListener('click', function (e) {
+            e.preventDefault();
+            exportAllSongs();
+            document.getElementById('my-drawer-2').checked = false;
+          });
+
+          document.getElementById('action-import-songs').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('import-songs').click();
+            document.getElementById('my-drawer-2').checked = false;
+          });
+
+          // Chord form buttons
+          document.getElementById('add-chord').addEventListener('click', function () {
+            const chord = getChordFromForm();
+            if (chord) {
+              chords.push(chord);
+              updateChordList();
+            }
+          });
+
+          document.getElementById('preview-chord').addEventListener('click', function () {
+            const chord = getChordFromForm();
+            if (chord) {
+              playChord(chord);
+            }
+          });
+
+          // Clear chord list
+          document.getElementById('clear-chord-list').addEventListener('click', function () {
+            const confirmClear = confirm('Are you sure you want to clear the chord list?');
+            if (confirmClear) {
+              chords = [];
+              updateChordList();
+            }
+          });
+
+          // Import songs
+          document.getElementById('import-songs').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                try {
+                  const importedData = JSON.parse(e.target.result);
+                  if (Array.isArray(importedData)) {
+                    // Single song data
+                    const songName = prompt('Enter a name for the imported song:', 'Imported Song');
+                    if (songName) {
+                      localStorage.setItem(SONG_PREFIX + songName, JSON.stringify(importedData));
+                      currentSongName = songName;
+                      chords = importedData;
+                      updateChordList();
+                      populateSongList();
+                      alert(`Song "${songName}" imported successfully.`);
+                    }
+                  } else if (typeof importedData === 'object') {
+                    // Multiple songs
+                    for (const songName in importedData) {
+                      localStorage.setItem(SONG_PREFIX + songName, JSON.stringify(importedData[songName]));
+                    }
+                    populateSongList();
+                    alert('Songs imported successfully.');
+                  } else {
+                    throw new Error('Invalid data format.');
+                  }
+                } catch (error) {
+                  alert('Failed to import songs: ' + error.message);
+                }
+              };
+              reader.readAsText(file);
+              // Reset the file input
+              event.target.value = '';
+            }
+          });
+        }
+
+        // Song actions
+        function createNewSong() {
+          const confirmNew = confirm('Create a new song? Unsaved changes will be lost.');
+          if (confirmNew) {
+            chords = [];
+            currentSongName = '';
+            updateChordList();
+            populateSongList();
+          }
+        }
+
+        function saveSong() {
+          let songName = currentSongName || prompt('Enter song name:', '');
+          if (songName !== null) {
+            songName = songName.trim();
+            if (songName === '') {
+              alert('Please enter a valid song name.');
+            } else {
+              localStorage.setItem(SONG_PREFIX + songName, JSON.stringify(chords));
+              currentSongName = songName;
+              populateSongList();
+              alert('Song saved.');
+            }
+          }
+        }
+
+        function removeSong() {
+          if (currentSongName !== '') {
+            const confirmDelete = confirm(`Are you sure you want to delete the song "${currentSongName}"?`);
+            if (confirmDelete) {
+              localStorage.removeItem(SONG_PREFIX + currentSongName);
+              chords = [];
+              currentSongName = '';
+              updateChordList();
+              populateSongList();
+              alert(`Song "${currentSongName}" has been removed.`);
+            }
+          } else {
+            alert('No song selected to remove.');
+          }
+        }
+
+        function exportSong() {
+          if (currentSongName === '') {
+            alert('Please select or save a song first.');
+            return;
+          }
+
+          const songData = localStorage.getItem(SONG_PREFIX + currentSongName);
+          if (songData) {
+            downloadJSONFile(`${currentSongName}.json`, songData);
+          } else {
+            alert('No data found for the current song.');
+          }
+        }
+
+        function exportAllSongs() {
+          const allSongs = {};
+
+          // Only include keys that start with 'song:'
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith(SONG_PREFIX)) {
+              const songName = key.substring(SONG_PREFIX.length);
+              try {
+                const songData = JSON.parse(localStorage.getItem(key));
+                allSongs[songName] = songData;
+              } catch (e) {
+                console.warn(`Skipping corrupted song data for "${songName}".`);
+              }
+            }
+          }
+
+          if (Object.keys(allSongs).length === 0) {
+            alert('No songs available to export.');
+            return;
+          }
+
+          const allSongsJSON = JSON.stringify(allSongs, null, 2);
+          downloadJSONFile('all_songs.json', allSongsJSON);
+        }
+
+        // Load selected song
+        function loadSong(songName) {
+          if (songName !== '') {
+            const songData = localStorage.getItem(SONG_PREFIX + songName);
+            if (songData) {
+              try {
+                chords = JSON.parse(songData);
+                currentSongName = songName;
+                updateChordList();
+                populateSongList();
+              } catch (e) {
+                alert('Error loading song data. The data may be corrupted.');
+              }
+            } else {
+              alert('Song data not found.');
+            }
+          } else {
+            // Clear current song
+            chords = [];
+            currentSongName = '';
+            updateChordList();
+          }
+        }
+
         function populateSelectors() {
           // Generate all 12 semitones starting from C
           const semitones = Array.from({ length: 12 }, (_, i) => i);
           const notesSet = new Set();
 
-          semitones.forEach(semitone => {
+          semitones.forEach((semitone) => {
             const interval = Interval.fromSemitones(semitone);
             const noteName = Note.transpose('C', interval);
             const enharmonic = Note.enharmonic(noteName);
@@ -140,7 +502,7 @@
           const uniqueNotes = Array.from(notesSet).sort(Note.compare);
 
           const rootNoteSelect = document.getElementById('root-note');
-          uniqueNotes.forEach(note => {
+          uniqueNotes.forEach((note) => {
             const option = document.createElement('option');
             option.value = note;
             option.textContent = note;
@@ -151,7 +513,7 @@
           const chordTypes = ChordType.all();
 
           // Filter out chord types with empty or strange names
-          const filteredChordTypes = chordTypes.filter(chordType => {
+          const filteredChordTypes = chordTypes.filter((chordType) => {
             return chordType.name && (chordType.aliases.length > 0 || chordType.symbol);
           });
 
@@ -159,7 +521,7 @@
           filteredChordTypes.sort((a, b) => a.name.localeCompare(b.name));
 
           const chordTypeSelect = document.getElementById('chord-type');
-          filteredChordTypes.forEach(chordType => {
+          filteredChordTypes.forEach((chordType) => {
             const option = document.createElement('option');
             option.value = chordType.aliases[0] || chordType.symbol || chordType.name;
             option.textContent = chordType.name;
@@ -171,8 +533,8 @@
         }
 
         function populateSongList() {
-          const songSelect = document.getElementById('song-select');
-          songSelect.innerHTML = '<option value="">-- Select a song --</option>';
+          const songListContainer = document.getElementById('song-list');
+          songListContainer.innerHTML = '';
           const songNames = [];
 
           // Only include keys that start with 'song:'
@@ -185,24 +547,28 @@
 
           songNames.sort();
 
-          songNames.forEach(name => {
-            const option = document.createElement('option');
-            option.value = name;
-            option.textContent = name;
-            songSelect.appendChild(option);
-          });
+          songNames.forEach((name) => {
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = '#';
+            link.textContent = name;
+            link.addEventListener('click', (e) => {
+              e.preventDefault();
+              loadSong(name);
+              // Close drawer on mobile
+              document.getElementById('my-drawer-2').checked = false;
+            });
+            listItem.appendChild(link);
 
-          // Set the song select to the current song if available
-          if (currentSongName !== '') {
-            songSelect.value = currentSongName;
-          }
+            if (name === currentSongName) {
+              link.classList.add('active');
+            }
+
+            songListContainer.appendChild(listItem);
+          });
         }
 
-        // Call populateSelectors after DOM is ready
-        populateSelectors();
-
-        // Event listener for adding a chord
-        document.getElementById('add-chord').addEventListener('click', function() {
+        function getChordFromForm() {
           const rootNote = document.getElementById('root-note').value;
           const chordTypeValue = document.getElementById('chord-type').value;
           const inversion = parseInt(document.getElementById('inversion').value);
@@ -216,11 +582,11 @@
 
           if (chordData.notes.length === 0) {
             alert('Invalid chord');
-            return;
+            return null;
           }
 
           // Adjust the notes to the selected octave
-          let octaveAdjustedNotes = chordData.intervals.map(interval => {
+          let octaveAdjustedNotes = chordData.intervals.map((interval) => {
             let note = Note.transpose(rootNote + octave, interval);
             return note;
           });
@@ -233,21 +599,17 @@
           }
 
           // Convert notes to MIDI numbers
-          const midiNotes = octaveAdjustedNotes.map(note => Note.midi(note));
+          const midiNotes = octaveAdjustedNotes.map((note) => Note.midi(note));
 
-          // Add the chord to the array
-          chords.push({
+          return {
             rootNote: rootNote,
             chordType: chordTypeValue,
             inversion: inversion,
             octave: octave,
             notes: octaveAdjustedNotes,
-            midiNotes: midiNotes
-          });
-
-          // Update the chord list display
-          updateChordList();
-        });
+            midiNotes: midiNotes,
+          };
+        }
 
         function updateChordList() {
           const chordList = document.getElementById('chord-list');
@@ -255,15 +617,15 @@
 
           chords.forEach((chord, index) => {
             const listItem = document.createElement('li');
-            listItem.classList.add('chord-item', 'flex', 'items-center', 'justify-between', 'bg-gray-100', 'dark:bg-gray-700', 'p-4', 'rounded-md');
+            listItem.classList.add('flex', 'items-center', 'justify-between', 'bg-base-100', 'p-4', 'rounded-md');
 
             const inversionText = chord.inversion === 0 ? 'Root Position' : `${chord.inversion} Inversion`;
             const chordInfo = `${chord.rootNote}${chord.chordType || ''} (${inversionText}, Octave: ${chord.octave})`;
 
             const chordDetails = document.createElement('div');
             chordDetails.innerHTML = `
-              <div class="text-lg font-semibold text-gray-800 dark:text-gray-100">${chordInfo}</div>
-              <div class="text-sm text-gray-600 dark:text-gray-300">Notes: ${chord.notes.join(', ')} | MIDI: ${chord.midiNotes.join(', ')}</div>
+              <div class="text-lg font-semibold">${chordInfo}</div>
+              <div class="text-sm opacity-70">Notes: ${chord.notes.join(', ')} | MIDI: ${chord.midiNotes.join(', ')}</div>
             `;
 
             const buttonGroup = document.createElement('div');
@@ -271,37 +633,71 @@
 
             // Create Play button
             const playButton = document.createElement('button');
-            playButton.textContent = 'Play';
-            playButton.classList.add('bg-green-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-green-600');
+            playButton.classList.add('btn', 'btn-circle', 'btn-sm', 'btn-ghost');
+            playButton.innerHTML = `
+              <svg class="h-5 w-5" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                   d="M14.752 11.168l-5.197-3.026A1 1 0 008 8.88v6.242a1
+                   1 0 001.555.832l5.197-3.026a1 1 0 000-1.664z"></path>
+              </svg>
+            `;
             playButton.addEventListener('click', () => {
               playChord(chord);
             });
 
             // Create buttons for move up/down, edit, remove
             const upButton = document.createElement('button');
-            upButton.textContent = 'Up';
-            upButton.classList.add('bg-blue-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-blue-600');
+            upButton.classList.add('btn', 'btn-circle', 'btn-sm', 'btn-ghost');
+            upButton.innerHTML = `
+              <svg class="h-5 w-5" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                   d="M5 15l7-7 7 7"></path>
+              </svg>
+            `;
             upButton.addEventListener('click', () => {
               moveChordUp(index);
             });
 
             const downButton = document.createElement('button');
-            downButton.textContent = 'Down';
-            downButton.classList.add('bg-blue-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-blue-600');
+            downButton.classList.add('btn', 'btn-circle', 'btn-sm', 'btn-ghost');
+            downButton.innerHTML = `
+              <svg class="h-5 w-5" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                   d="M19 9l-7 7-7-7"></path>
+              </svg>
+            `;
             downButton.addEventListener('click', () => {
               moveChordDown(index);
             });
 
             const editButton = document.createElement('button');
-            editButton.textContent = 'Edit';
-            editButton.classList.add('bg-yellow-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-yellow-600');
+            editButton.classList.add('btn', 'btn-circle', 'btn-sm', 'btn-ghost');
+            editButton.innerHTML = `
+              <svg class="h-5 w-5" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                   d="M15.232 5.232l3.536 3.536M9 13l3.536-3.536M19.071 4.929a1.5
+                   1.5 0 00-2.121 0l-10.607 10.607a1 1 0 00-.263.465l-1 4a1 1 0
+                   001.212 1.212l4-1a1 1 0 00.465-.263l10.607-10.607a1.5
+                   1.5 0 000-2.121z"></path>
+              </svg>
+            `;
             editButton.addEventListener('click', () => {
               editChord(index);
             });
 
             const removeButton = document.createElement('button');
-            removeButton.textContent = 'Remove';
-            removeButton.classList.add('bg-red-500', 'text-white', 'px-2', 'py-1', 'rounded-md', 'hover:bg-red-600');
+            removeButton.classList.add('btn', 'btn-circle', 'btn-sm', 'btn-ghost');
+            removeButton.innerHTML = `
+              <svg class="h-5 w-5" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                   d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            `;
             removeButton.addEventListener('click', () => {
               removeChord(index);
             });
@@ -319,8 +715,11 @@
           });
 
           // Display the MIDI notes array as formatted JSON
-          const midiNotesArray = chords.map(chord => chord.midiNotes);
+          const midiNotesArray = chords.map((chord) => chord.midiNotes);
           document.getElementById('midi-notes-json').textContent = JSON.stringify(midiNotesArray, null, 2);
+
+          // Update navbar title
+          updateNavbarTitle();
         }
 
         function playChord(chord) {
@@ -333,7 +732,7 @@
           piano.stop();
 
           // Play the chord notes
-          chord.notes.forEach(note => {
+          chord.notes.forEach((note) => {
             piano.play(note, 0, { duration: 1 });
           });
         }
@@ -369,165 +768,6 @@
           chords.splice(index, 1);
           updateChordList();
         }
-
-        // Save song to localStorage
-        document.getElementById('save-song').addEventListener('click', function() {
-          let songName = prompt('Enter song name:', currentSongName);
-          if (songName !== null) {
-            songName = songName.trim();
-            if (songName === '') {
-              if (currentSongName !== '') {
-                // Update current song
-                localStorage.setItem(SONG_PREFIX + currentSongName, JSON.stringify(chords));
-                alert('Song updated.');
-              } else {
-                alert('Please enter a valid song name.');
-              }
-            } else {
-              // Save new song or update existing
-              localStorage.setItem(SONG_PREFIX + songName, JSON.stringify(chords));
-              currentSongName = songName;
-              populateSongList();
-              document.getElementById('song-select').value = songName;
-              alert('Song saved.');
-            }
-          }
-        });
-
-        // Remove song from localStorage
-        document.getElementById('remove-song').addEventListener('click', function() {
-          const songSelect = document.getElementById('song-select');
-          const songName = songSelect.value;
-          if (songName !== '') {
-            const confirmDelete = confirm(`Are you sure you want to delete the song "${songName}"?`);
-            if (confirmDelete) {
-              localStorage.removeItem(SONG_PREFIX + songName);
-              if (songName === currentSongName) {
-                currentSongName = '';
-                chords = [];
-                updateChordList();
-              }
-              populateSongList();
-              alert(`Song "${songName}" has been removed.`);
-            }
-          } else {
-            alert('Please select a song to remove.');
-          }
-        });
-
-        // Load selected song
-        document.getElementById('song-select').addEventListener('change', function() {
-          const songName = this.value;
-          if (songName !== '') {
-            const songData = localStorage.getItem(SONG_PREFIX + songName);
-            if (songData) {
-              try {
-                chords = JSON.parse(songData);
-                currentSongName = songName;
-                updateChordList();
-                //alert(`Loaded song: ${songName}`);
-              } catch (e) {
-                alert('Error loading song data. The data may be corrupted.');
-              }
-            } else {
-              alert('Song data not found.');
-            }
-          } else {
-            // Clear current song
-            chords = [];
-            currentSongName = '';
-            updateChordList();
-          }
-        });
-
-        // Export current song
-        document.getElementById('export-song').addEventListener('click', function() {
-          if (currentSongName === '') {
-            alert('Please select or save a song first.');
-            return;
-          }
-
-          const songData = localStorage.getItem(SONG_PREFIX + currentSongName);
-          if (songData) {
-            downloadJSONFile(`${currentSongName}.json`, songData);
-          } else {
-            alert('No data found for the current song.');
-          }
-        });
-
-        // Export all songs
-        document.getElementById('export-all-songs').addEventListener('click', function() {
-          const allSongs = {};
-
-          // Only include keys that start with 'song:'
-          for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith(SONG_PREFIX)) {
-              const songName = key.substring(SONG_PREFIX.length);
-              try {
-                const songData = JSON.parse(localStorage.getItem(key));
-                allSongs[songName] = songData;
-              } catch (e) {
-                console.warn(`Skipping corrupted song data for "${songName}".`);
-              }
-            }
-          }
-
-          if (Object.keys(allSongs).length === 0) {
-            alert('No songs available to export.');
-            return;
-          }
-
-          const allSongsJSON = JSON.stringify(allSongs, null, 2);
-          downloadJSONFile('all_songs.json', allSongsJSON);
-        });
-
-        // Import songs
-        document.getElementById('import-songs').addEventListener('change', function(event) {
-          const file = event.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-              try {
-                const importedData = JSON.parse(e.target.result);
-                if (Array.isArray(importedData)) {
-                  // Single song data
-                  if (currentSongName === '') {
-                    const songName = prompt('Enter a name for the imported song:', 'Imported Song');
-                    if (songName) {
-                      localStorage.setItem(SONG_PREFIX + songName, JSON.stringify(importedData));
-                      currentSongName = songName;
-                      chords = importedData;
-                      updateChordList();
-                      populateSongList();
-                      document.getElementById('song-select').value = songName;
-                      alert(`Song "${songName}" imported successfully.`);
-                    }
-                  } else {
-                    localStorage.setItem(SONG_PREFIX + currentSongName, JSON.stringify(importedData));
-                    chords = importedData;
-                    updateChordList();
-                    alert(`Current song "${currentSongName}" updated with imported data.`);
-                  }
-                } else if (typeof importedData === 'object') {
-                  // Multiple songs
-                  for (const songName in importedData) {
-                    localStorage.setItem(SONG_PREFIX + songName, JSON.stringify(importedData[songName]));
-                  }
-                  populateSongList();
-                  alert('Songs imported successfully.');
-                } else {
-                  throw new Error('Invalid data format.');
-                }
-              } catch (error) {
-                alert('Failed to import songs: ' + error.message);
-              }
-            };
-            reader.readAsText(file);
-            // Reset the file input
-            event.target.value = '';
-          }
-        });
 
         function downloadJSONFile(filename, content) {
           const blob = new Blob([content], { type: 'application/json' });
