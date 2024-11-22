@@ -48,7 +48,7 @@
         <!-- Page content -->
         <div class="p-4 overflow-y-auto">
           <!-- Chord parameter selection form -->
-          <form id="chord-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <form id="chord-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
             <!-- Form fields -->
             <div>
               <label for="root-note" class="label">
@@ -98,7 +98,7 @@
               </select>
             </div>
 
-            <div class="col-span-full flex space-x-2">
+            <div class="flex items-end">
               <button type="button" id="add-chord" class="btn btn-success flex-1">
                 <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor"
                      viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -106,13 +106,16 @@
                      d="M12 4v16m8-8H4"></path></svg>
                 Add Chord
               </button>
-              <button type="button" id="preview-chord" class="btn btn-info flex-1">
+            </div>
+
+            <div class="flex items-end">
+                <button type="button" id="preview-chord" class="btn btn-info flex-1">
                 <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor"
                      viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                      d="M14.752 11.168l-5.197-3.026A1 1 0 008 8.88v6.242a1
                      1 0 001.555.832l5.197-3.026a1 1 0 000-1.664z"></path></svg>
-                Preview Chord
+                Preview
               </button>
             </div>
           </form>
@@ -733,7 +736,7 @@
 
           // Play the chord notes
           chord.notes.forEach((note) => {
-            piano.play(note, 0, { duration: 1 });
+            piano.play(note, 0, { duration: 1, gain: 10 });
           });
         }
 
